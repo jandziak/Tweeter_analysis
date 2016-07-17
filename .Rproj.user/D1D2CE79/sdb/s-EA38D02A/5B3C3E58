@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(devtools)\nlibrary(twitteR)\nlibrary(syuzhet)\n# save credentials\nrequestURL = \"https://api.twitter.com/oauth/request_token\"\naccessURL = \"https://api.twitter.com/oauth/access_token\"\nauthURL = \"https://api.twitter.com/oauth/authorize\"\n\nconsumerKey = \"uDRIFbDDnhQxSnBfZUVVsGTC0\"\nconsumerSecret = \"bhZ1UW9CPUEnBq7dqnQ4ChX1O1JTSgAZGNDr6Y7phVUq94CPHT\"\n  \naccessToken = \"747117718944518149-eJP10l1JPpjfz8H5ezAhc4vCEwIWYgS\"\naccessSecret = \"XynbdbMIwbbaFAXehzMTvFr9F6zo2IvkfXdRjnY9OTGGS\"\n  \nsetup_twitter_oauth(consumerKey,\n                    consumerSecret,\n                    accessToken,\n                    accessSecret)\n\n# harvest some tweets\nsome_tweets = searchTwitter('starbucks', n=100, lang='en')\n\n# get the text\nsome_txt = sapply(some_tweets, function(x) x$getText())\n\n# remove retweet entities\nsome_txt = gsub(\"(RT|via)((?:\\\\b\\\\W*@\\\\w+)+)\", \"\", some_txt)\n# remove at people\nsome_txt = gsub(\"@\\\\w+\", \"\", some_txt)\n# remove punctuation\nsome_txt = gsub(\"[[:punct:]]\", \"\", some_txt)\n# remove numbers\nsome_txt = gsub(\"[[:digit:]]\", \"\", some_txt)\n# remove html links\nsome_txt = gsub(\"http\\\\w+\", \"\", some_txt)\n# remove unnecessary spaces\nsome_txt = gsub(\"[ \\t]{2,}\", \"\", some_txt)\nsome_txt = gsub(\"^\\\\s+|\\\\s+$\", \"\", some_txt)\n\n# define \"tolower error handling\" function \ntry.error = function(x)\n{\n  # create missing value\n  y = NA\n  # tryCatch error\n  try_error = tryCatch(tolower(x), error=function(e) e)\n  # if not an error\n  if (!inherits(try_error, \"error\"))\n    y = tolower(x)\n  # result\n  return(y)\n}\n\nsome_txt = sapply(some_txt, try.error)\n# remove NAs in some_txt\nsome_txt = some_txt[!is.na(some_txt)]\nnames(some_txt) = NULL\n\nsyuzhet_vector <- get_sentiment(some_txt, method=\"syuzhet\")\n\n\nlibrary(httr)\nlibrary(devtools)\ninstall_github(\"aloth/sentiment/sentiment\")\ninstall_github(\"b2b-web-id/omegahat-Rstem\")\ninstall.packages(\"Rstem\", repos = \"http://www.omegahat.org/R\", type = \"source\")\ndevtools::install_version('Rstem', '0.4-1')\ninstall.packages(\"Rstem\", repos = \"http://www.omegahat.org/R\")\n\n",
+    "created" : 1466967797796.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3187508177",
+    "id" : "5B3C3E58",
+    "lastKnownWriteTime" : 1467022814,
+    "last_content_update" : 1467022814,
+    "path" : "C:/Repository/Tweeter/tweet.R",
+    "project_path" : "tweet.R",
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
